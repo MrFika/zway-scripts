@@ -9,6 +9,8 @@ import time
 ##
 ## Variables
 ##
+
+# Change the IP!
 host = "http://192.168.1.134:8083"
 api_path = "/ZAutomation/api/v1/"
 
@@ -51,11 +53,9 @@ def main(argv):
 	
 	switch_device = []
 	data = get_request(session, "devices")
-	#Data is returned as a dict
-	#Devices are in a list inside data dict.
-	#Elements inside device_list can be accesed like a dict
 	for device in data["data"]["devices"]:
 		if device["deviceType"] == "switchBinary":
+			## Could be modified to use a manually assigned ID.
 			title = device["metrics"]["title"] 
 			switch_device.append(device)
 	
