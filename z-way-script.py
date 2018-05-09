@@ -11,7 +11,7 @@ import time
 ##
 
 # Change the IP!
-host = "http://192.168.1.134:8083"
+host = "http://172.26.135.1:8083"
 api_path = "/ZAutomation/api/v1/"
 
 
@@ -53,13 +53,16 @@ def main(argv):
 	
 	switch_device = []
 	data = get_request(session, "devices")
+	print("Devices available:")
 	for device in data["data"]["devices"]:
 		if device["deviceType"] == "switchBinary":
 			## Could be modified to use a manually assigned ID.
-			title = device["metrics"]["title"] 
+			title = device["metrics"]["title"]
+			print(title)
 			switch_device.append(device)
 	
-	input_nbr = int(input("Enter switch Number: "))
+	input_nbr = int(input("Enter switch #: "))
+	print("Configure the loop timings: ")
 	sleep_on_time = int(input("Time switch will be ON: "))
 	sleep_off_time = int(input("Time switch will be OFF: "))
 	while True:
