@@ -31,6 +31,13 @@ def login_request(session, login_header, login_payload):
 	resp = session.post(host + api_path + 'login', headers=login_header, json=login_payload)
 	return resp.status_code
 
+def print_devices_title(devices):
+	index=0
+	for entry in devices:
+		print("ID:" + str(index) + " -  " + entry["metrics"]["title"])
+		index+=1  
+
+
 ##
 ## Main Program
 ##
@@ -56,22 +63,24 @@ def main(argv):
 	print("Devices available:")
 	for device in data["data"]["devices"]:
 		if device["deviceType"] == "switchBinary":
-			## Could be modified to use a manually assigned ID.
-			title = device["metrics"]["title"]
-			print(title)
 			switch_device.append(device)
 	
-	input_nbr = int(input("Enter switch #: "))
-	print("Configure the loop timings: ")
+	print_devices_title(switch_device)
+	input_nbr = int(input("Enter switch ID number of the borrowed switch (ID on the left): "))
+	print("Configure loop timings (in seconds): ")
 	sleep_on_time = int(input("Time switch will be ON: "))
 	sleep_off_time = int(input("Time switch will be OFF: "))
+	runtime=0
 	while True:
 		print("On: ")
 		print(get_request(session, "devices/" + switch_device[input_nbr]["id"] + "/command/on"))
 		time.sleep(sleep_on_time)
+		runtime+=sleep_on_time
 		print("Off: ")
 		print(get_request(session, "devices/" + switch_device[input_nbr]["id"] + "/command/off"))
 		time.sleep(sleep_off_time)
+		runtime+=sleep_off_time
+		print("Running for ~" + str(runtime) + " seconds")
 
 
 if __name__ == "__main__":
