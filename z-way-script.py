@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+## Author: Victor Nilsson
 import os
 import sys
 import requests
@@ -10,7 +11,7 @@ import time
 ## Variables
 ##
 
-# Change the IP!
+# IP to z-way server. Change if needed
 host = "http://172.26.135.1:8083"
 api_path = "/ZAutomation/api/v1/"
 
@@ -58,6 +59,7 @@ def main(argv):
 		print("Failed to login")
 		sys.exit()
 	
+	#### Find binary switch devices connected to z-way controller.
 	switch_device = []
 	data = get_request(session, "devices")
 	print("Devices available:")
@@ -65,12 +67,15 @@ def main(argv):
 		if device["deviceType"] == "switchBinary":
 			switch_device.append(device)
 	
+	#### Print devices and let user input loop sleep timings.
 	print_devices_title(switch_device)
-	input_nbr = int(input("Enter switch ID number of the borrowed switch (ID on the left): "))
+	input_nbr = int(input("Enter ID number of the borrowed switch (ID on the left): "))
 	print("Configure loop timings (in seconds): ")
 	sleep_on_time = int(input("Time switch will be ON: "))
 	sleep_off_time = int(input("Time switch will be OFF: "))
+	
 	runtime=0
+	iterations=0
 	while True:
 		print("On: ")
 		print(get_request(session, "devices/" + switch_device[input_nbr]["id"] + "/command/on"))
@@ -80,7 +85,8 @@ def main(argv):
 		print(get_request(session, "devices/" + switch_device[input_nbr]["id"] + "/command/off"))
 		time.sleep(sleep_off_time)
 		runtime+=sleep_off_time
-		print("Running for ~" + str(runtime) + " seconds")
+		iterations+=1
+		print("Running for ~" + str(runtime) + " seconds, " + str(iterations) + "on/off iterations")
 
 
 if __name__ == "__main__":
